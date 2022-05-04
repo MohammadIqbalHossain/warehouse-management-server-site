@@ -31,10 +31,33 @@ async function run() {
         })
 
         //API for getting one data.
-        app.get('/books/:id', async (req, res) => {
+        app.get('/book/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await bookCollections.findOne(query);
+            res.send(result);
+        })
+
+
+        //update quantity 
+        app.put('/books/:id', async(req, res) => {
+            const id = req.params.id;
+            console.log(req.body)
+            const quantity = req.body
+            const filter = {_id: ObjectId(id)};
+            const options = {upsert: true};
+            const updatedQuantity = {
+                $set: {quantity}
+            }
+            const  result = await bookCollections.updateOne(filter, updatedQuantity, options);
+            res.send(result); 
+        });
+
+        //delete one item.
+        app.delete('/book/:id', async(req,res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await bookCollections.deleteOne(query);
             res.send(result);
         })
     }
