@@ -3,14 +3,23 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
+// const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors());
 app.use(express.json());
 
+// jwt algo = 07683e0a5100034c68c57da59da2c9a77cf61d2446efe229a4c112c4472b1c7ffcd2ac63fb525eba99bf3983bbdd014053915566cc2f275a17d10b0c15152706
 
-
+// auth
+app.post('/login', async(req, res) => {
+    const user = req.body;
+    const accessToken = jwt.sign(user, process.env.JWT_ALGO_SECRET, {
+        expiresIn: '2d'
+    })
+    res.send({accessToken})
+})
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gy6zj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -69,12 +78,14 @@ async function run() {
         });
 
         //load singl users items.
-        app.get('/books', async(req,res) => {
+        app.get('/books', async(req, res) => {
             const email = req.query.email;
             console.log(email);
             const query = {email: email};
+            console.log(query);
             const cursor = bookCollections.find(query);
             const result = await cursor.toArray();
+            console.log(result);
             res.send(result);
         })
     }
