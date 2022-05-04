@@ -59,6 +59,23 @@ async function run() {
             const query = {_id:ObjectId(id)};
             const result = await bookCollections.deleteOne(query);
             res.send(result);
+        });
+
+        //add Books inventory
+        app.post("/book", async(req, res) => {
+            const addInventory = req.body;
+            const result = await bookCollections.insertOne(addInventory)
+            res.send(result);
+        });
+
+        //load singl users items.
+        app.get('/books', async(req,res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = {email: email};
+            const cursor = bookCollections.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
         })
     }
     finally {
