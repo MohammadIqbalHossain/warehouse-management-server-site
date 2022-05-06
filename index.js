@@ -10,7 +10,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// jwt algo = 07683e0a5100034c68c57da59da2c9a77cf61d2446efe229a4c112c4472b1c7ffcd2ac63fb525eba99bf3983bbdd014053915566cc2f275a17d10b0c15152706
 
 
 function verifyToken(req, res, next) {
@@ -21,9 +20,11 @@ function verifyToken(req, res, next) {
     const token = header.split(' ')[1];
     jwt.verify(token, process.env.JWT_ALGO_SECRET, (err, decoded) => {
         if (err) {
+            console.log(err);
             return res.status(403).send({ message: 'Forbidden' });
         }
-       
+        
+        console.log(decoded)
         req.decoded = decoded;
     })
     next()
@@ -68,7 +69,7 @@ async function run() {
         })
 
 
-        //update quantity 
+        // update quantity 
         app.put('/books/:id', async (req, res) => {
             const id = req.params.id;
             console.log(req.body)
@@ -77,11 +78,33 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedQuantity = {
-                $set: { ...quantity}
+                $set: { ...quantity - 1}
             }
             const result = await bookCollections.updateOne(filter, updatedQuantity, options);
             res.send(result);
         });
+
+        // //update quantity 
+        // app.get('book/:id', async(req, res) => {
+        //     const query = {_id: ObjectId(req.params.id)};
+        //     const book = await bookCollections.findOne(query);
+        //     const options = {upsert: true};
+        //     if(book.quantity = 1){
+        //         const result = bookCollections.deleteOne(query);
+        //         res.send({delete: "deleted"})
+        //     }
+        //     else{
+        //         const updateDoc = {
+        //             $set: {
+        //                ...book,
+        //                quantity: book.quantity - 1
+        //             }
+        //         }
+        //         const result = await bookCollections.updateOne(query, updateDoc, options)
+        //         res.send(result);
+        //     }
+           
+        // })
 
         //delete one item.
         app.delete('/book/:id', async (req, res) => {
@@ -98,11 +121,12 @@ async function run() {
             res.send(result);
         });
 
-        //load single users items.
-        app.get('/books', verifyToken, async (req, res) => {
-            
+        //  
+        // load single users items.
+        app.get('/books', verifyToken,  async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
+            console.log(email)
             if (email === decodedEmail) {
                 const query = { email: email };
                 console.log(query);
@@ -114,6 +138,8 @@ async function run() {
                 res.status(403).send({message: "Forbidden access"});
             }
         })
+
+        
     }
     finally {
 
