@@ -126,7 +126,7 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-    res.send("server Running");
+    res.send("server Running on the heroku");
 })
 
 app.listen(port, () => {
