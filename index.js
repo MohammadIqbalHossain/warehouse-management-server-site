@@ -4,9 +4,8 @@ const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -16,17 +15,15 @@ app.use(express.json());
 
 function verifyToken(req, res, next) {
     const header = req.headers.authorization;
-    console.log('inseide token', header);
     if (!header) {
         return res.status(401).send({ message: 'unauthorized access' });
     }
     const token = header.split(' ')[1];
-    console.log(token);
     jwt.verify(token, process.env.JWT_ALGO_SECRET, (err, decoded) => {
         if (err) {
             return res.status(403).send({ message: 'Forbidden' });
         }
-        console.log(decoded)
+       
         req.decoded = decoded;
     })
     next()
@@ -75,11 +72,12 @@ async function run() {
         app.put('/books/:id', async (req, res) => {
             const id = req.params.id;
             console.log(req.body)
-            const quantity = req.body
+            const quantity = req.body.quantity
+            console.log(quantity)
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedQuantity = {
-                $set: { quantity }
+                $set: { ...quantity}
             }
             const result = await bookCollections.updateOne(filter, updatedQuantity, options);
             res.send(result);
@@ -124,13 +122,6 @@ async function run() {
 }
 
 run().catch(console.dir);
-
-
-
-
-
-
-
 
 
 
