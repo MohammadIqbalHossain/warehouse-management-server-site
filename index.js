@@ -13,11 +13,13 @@ app.use(express.json());
 
 
 function verifyToken(req, res, next) {
+    console.log("something")
     const header = req.headers.authorization;
     if (!header) {
         return res.status(401).send({ message: 'unauthorized access' });
     }
     const token = header.split(' ')[1];
+    console.log(token);
     jwt.verify(token, process.env.JWT_ALGO_SECRET, (err, decoded) => {
         if (err) {
             console.log(err);
@@ -75,12 +77,12 @@ async function run() {
             console.log(req.body)
             const quantity = req.body.quantity
             console.log(quantity)
-            const filter = { _id: ObjectId(id) };
+            const filter = { _id: ObjectId(id)};
             const options = { upsert: true };
             const updatedQuantity = {
-                $set: { ...quantity}
+                $set: {...updatedQuantity}
             }
-            const result = await bookCollections.updateOne(filter, updatedQuantity, options);
+            const result = await bookCollections.updateOne(filter, updatedQuantit, options);
             res.send(result);
         });
 
