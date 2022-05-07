@@ -71,42 +71,32 @@ async function run() {
         })
 
 
-        // update quantity 
-        app.put('/books/:id', async (req, res) => {
-            const id = req.params.id;
-            console.log(req.body)
-            const quantity = req.body.quantity
-            console.log(quantity)
-            const filter = { _id: ObjectId(id)};
-            const options = { upsert: true };
-            const updatedQuantity = {
-                $set: {...updatedQuantity}
-            }
-            const result = await bookCollections.updateOne(filter, updatedQuantit, options);
-            res.send(result);
-        });
 
-        // //update quantity 
-        // app.get('book/:id', async(req, res) => {
-        //     const query = {_id: ObjectId(req.params.id)};
-        //     const book = await bookCollections.findOne(query);
-        //     const options = {upsert: true};
-        //     if(book.quantity = 1){
-        //         const result = bookCollections.deleteOne(query);
-        //         res.send({delete: "deleted"})
-        //     }
-        //     else{
-        //         const updateDoc = {
-        //             $set: {
-        //                ...book,
-        //                quantity: book.quantity - 1
-        //             }
-        //         }
-        //         const result = await bookCollections.updateOne(query, updateDoc, options)
-        //         res.send(result);
-        //     }
-           
-        // })
+        //update quantity
+        app.put('/book/update/:id', async(req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const book = await bookCollections.findOne({_id: ObjectId(id)});
+            const updateQuantity = book.quantity - 1;
+            const result = await bookCollections.updateOne({_id: ObjectId(id)}, {
+                $set: {quantity : updateQuantity}
+            })
+            res.send(result)
+
+        })
+
+        app.put('/stock/:id', async(req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const qunatity = req.body.quantity.quantity;
+            const book = await bookCollections.findOne({_id: ObjectId(id)});
+            const newUpdate = parseInt(book.quantity) + parseInt(qunatity);
+            const result = await bookCollections.updateOne({_id:ObjectId(id)},
+               $set({qunatity: newUpdate})
+            )
+            res.send(result);
+        })
+        
 
         //delete one item.
         app.delete('/book/:id', async (req, res) => {
