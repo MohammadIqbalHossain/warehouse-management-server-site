@@ -78,7 +78,7 @@ async function run() {
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updatedQuantity = {
-                $set: { ...quantity - 1}
+                $set: { ...quantity}
             }
             const result = await bookCollections.updateOne(filter, updatedQuantity, options);
             res.send(result);
