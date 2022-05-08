@@ -9,7 +9,10 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-
+// app.use((req, res, next) => {
+//     res.header({"Access-Control-Allow-Origin": "*"});
+//     next();
+//   }) 
 
 
 function verifyToken(req, res, next) {
@@ -114,7 +117,7 @@ async function run() {
         });
 
         //  
-        // load single users items.
+        // load single users items by email.
         app.get('/books', verifyToken,  async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
