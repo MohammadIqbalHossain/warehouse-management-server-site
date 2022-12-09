@@ -15,25 +15,25 @@ app.use(express.json());
 //   }) 
 
 
-function verifyToken(req, res, next) {
-    console.log("something")
-    const header = req.headers.authorization;
-    if (!header) {
-        return res.status(401).send({ message: 'unauthorized access' });
-    }
-    const token = header.split(' ')[1];
-    console.log(token);
-    jwt.verify(token, process.env.JWT_ALGO_SECRET, (err, decoded) => {
-        if (err) {
-            console.log(err);
-            return res.status(403).send({ message: 'Forbidden' });
-        }
+// function verifyToken(req, res, next) {
+//     console.log("something")
+//     const header = req.headers.authorization;
+//     if (!header) {
+//         return res.status(401).send({ message: 'unauthorized access' });
+//     }
+//     const token = header.split(' ')[1];
+//     console.log(token);
+//     jwt.verify(token, process.env.JWT_ALGO_SECRET, (err, decoded) => {
+//         if (err) {
+//             console.log(err);
+//             return res.status(403).send({ message: 'Forbidden' });
+//         }
         
-        console.log(decoded)
-        req.decoded = decoded;
-    })
-    next()
-}
+//         console.log(decoded)
+//         req.decoded = decoded;
+//     })
+//     next()
+// }
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gy6zj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -117,8 +117,8 @@ async function run() {
         });
 
         //  
-        // load single users items by email.
-        app.get('/books', verifyToken,  async (req, res) => {
+        // load single users items by email. verifyToken,
+        app.get('/books',  async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
             console.log(email)
