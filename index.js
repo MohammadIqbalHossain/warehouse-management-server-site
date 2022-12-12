@@ -147,7 +147,7 @@ run().catch(console.dir);
 
 
 app.get("/", (req, res) => {
-    res.send("server Running on the heroku");
+    res.send("Server Running on the Vercel");
 })
 
 app.listen(port, () => {
